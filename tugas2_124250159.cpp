@@ -412,7 +412,6 @@ void hapusKendaraan() {
     cout << "Data kendaraan berhasil dihapus" << endl;
     cout << endl;
 }
-
 // ================== UNDO ==================
 void undoAktivitas() {
 
@@ -420,42 +419,84 @@ void undoAktivitas() {
     cout << "                 UNDO AKTIVITAS" << endl;
     garis();
 
+    // CEK STACK KOSONG
     if (stackKosong()) {
 
         cout << endl;
-        cout << "Tidak ada aktivitas" << endl;
+        cout << "Tidak ada aktivitas yang bisa di undo" << endl;
         cout << endl;
 
         return;
     }
 
+    // AMBIL DATA TERAKHIR
     Aktivitas terakhir = pop();
 
+    // CARI KENDARAAN
     Node* kendaraan = cari(root, terakhir.noPolisi);
 
+    // CEK KENDARAAN ADA ATAU TIDAK
+    if (kendaraan == NULL) {
+
+        cout << endl;
+        cout << "Data kendaraan sudah tidak ada" << endl;
+        cout << endl;
+
+        return;
+    }
+
+    // ================== JIKA AKSI MASUK ==================
     if (terakhir.aksi == "masuk") {
 
-        kendaraan->data.status = "Di Luar Parkiran";
+        // CEK STATUS
+        if (kendaraan->data.status == "Di Parkiran") {
 
-        jumlahParkir--;
+            kendaraan->data.status = "Di Luar Parkiran";
 
-        cout << endl;
-        cout << "Undo kendaraan masuk berhasil" << endl;
-        cout << endl;
+            // AGAR TIDAK MINUS
+            if (jumlahParkir > 0) {
+                jumlahParkir--;
+            }
+
+            cout << endl;
+            cout << "Undo kendaraan masuk berhasil" << endl;
+            cout << endl;
+        }
+
+        else {
+
+            cout << endl;
+            cout << "Undo gagal" << endl;
+            cout << endl;
+        }
     }
 
-    else {
+    // ================== JIKA AKSI KELUAR ==================
+    else if (terakhir.aksi == "keluar") {
 
-        kendaraan->data.status = "Di Parkiran";
+        // CEK KAPASITAS
+        if (jumlahParkir < KAPASITAS) {
 
-        jumlahParkir++;
+            kendaraan->data.status = "Di Parkiran";
 
-        cout << endl;
-        cout << "Undo kendaraan keluar berhasil" << endl;
-        cout << endl;
+            jumlahParkir++;
+
+            cout << endl;
+            cout << "Undo kendaraan keluar berhasil" << endl;
+            cout << endl;
+        }
+
+        else {
+
+            cout << endl;
+            cout << "Parkiran penuh, undo gagal" << endl;
+            cout << endl;
+        }
     }
+
+    garis();
+    cout << endl;
 }
-
 // ================== ANTRIAN ==================
 void tampilAntrian() {
 
